@@ -1,0 +1,10 @@
+*.db
+__pycache__/
+.idea/
+venv/
+.env
+db.sqlite3
+static/
+order_files/
+*.log
+media/
