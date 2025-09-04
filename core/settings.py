@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import os
 from dotenv import load_dotenv
+from celery.schedules import crontab
+
 
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
@@ -44,7 +46,8 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "apps",
-    "rest_framework"
+    "rest_framework",
+    "django_celery_beat",
     
 ]
 
@@ -116,8 +119,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
+TIME_ZONE = 'Asia/Tashkent'
+USE_TZ = True
 
-TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -128,6 +132,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "static/"
+
+
+
+CELERY_BEAT_SCHEDULE = {
+    "check_meals_every_minute": {
+        "task": "core.tasks.check_meals",
+        "schedule": crontab(minute="*"),  # har daqiqada tekshiradi
+    },
+}
 
 
 MEDIA_URL = "media/"
