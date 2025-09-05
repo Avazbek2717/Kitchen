@@ -1,18 +1,15 @@
 
 
-from celery import shared_task
-from django.utils.timezone import now
-from apps.models import Meal
-from apps.models import User
-from aiogram import Bot
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from datetime import datetime
 import asyncio
 from datetime import datetime
-import logging
-from celery import shared_task
-from bot.database import *
 
+from aiogram import Bot
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from django.utils.timezone import now
+
+from bot.database import *
+from celery import shared_task
+from celery import shared_task
 
 admin_id=5167032738
 

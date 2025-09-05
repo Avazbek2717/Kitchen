@@ -12,8 +12,6 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.types import CallbackQuery
 
 
-
-
 TOKEN = os.getenv("TOKEN")
 start_router = Router()
 

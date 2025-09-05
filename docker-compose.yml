@@ -1,0 +1,102 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    container_name: kitchen_db_container
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    env_file:
+      - .env
+    restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${DB_USER}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+  web:
+    build:
+      context: .
+    image: kitchen_web_image
+    volumes:
+      - .:/app
+      - ./static:/app/static/
+      - ./media:/app/media/
+    env_file:
+      - .env
+    container_name: kitchen_web_container
+    command: gunicorn kitchen.wsgi:application --workers 4 --bind=0.0.0.0:8099
+    ports:
+      - "8099:8099"
+    depends_on:
+      - db
+    restart: always
+    environment:
+      DATABASE_URL: postgres://$DB_USER:$DB_PASSWORD@db:5432/$DB_NAME
+
+  bot:
+    build:
+      context: .
+    image: kitchen_bot_image
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    container_name: kitchen_bot_container
+    command: python main.py
+    restart: always
+
+  celery-beat:
+    build:
+      context: .
+    image: kitchen_celery_beat_image
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    container_name: kitchen_celery_beat_container
+    command: celery -A core.celery beat --loglevel=info --beat
+    depends_on:
+      - db
+      - redis
+    restart: always
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+
+  celery-worker:
+    build:
+      context: .
+    image: kitchen_celery_worker_image
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    env_file:
+      - .env
+    container_name: kitchen_celery_worker_container
+    command: celery -A core.celery worker --loglevel=info --pool=solo
+    depends_on:
+      - db
+      - redis
+    restart: always
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+
+  redis:
+    image: redis
+    container_name: kitchen_redis_container
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  postgres_data:
+  static:
+  media:
