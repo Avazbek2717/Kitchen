@@ -85,13 +85,13 @@ services:
       - redis
     restart: always
     environment:
-      CELERY_BROKER_URL: redis://redis:6379/0
+      CELERY_BROKER_URL: redis://redis:6380/0
 
   redis:
     image: redis
     container_name: kitchen_redis_container
     ports:
-      - "6379:6379"
+      - "63780:6380"
     restart: always
 
 volumes:
