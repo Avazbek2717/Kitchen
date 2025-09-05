@@ -19,7 +19,7 @@ def check_meals():
     from aiogram import Bot, types
 
     async def main():
-        bot = Bot(token="8395669472:AAHjXTgl_o7MlaxE1dhdoL1RHY8_xNk_lXk")
+        bot = Bot(token="6952901446:AAHrX_x7B4O6IOtUl4_SLvpUDKi43dgrzrA")
         result = await process(bot)
         await bot.session.close()
         return result
