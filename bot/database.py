@@ -50,7 +50,8 @@ def get_meal_responses_count(meal_id):
 def get_meal_image(meal_id):
     try:
         meal = Meal.objects.get(id=meal_id)
-        return meal.image.path  # faylning absolute yo‘li
-        # return meal.image.url  # agar URL kerak bo‘lsa
+        if meal.image and hasattr(meal.image, "path"):  # rasm mavjudligini tekshirish
+            return meal.image.path  # faylning absolute yo‘li
+        return None
     except Meal.DoesNotExist:
         return None
