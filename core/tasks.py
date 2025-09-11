@@ -1,5 +1,4 @@
 
-
 from celery import shared_task
 from aiogram import Bot
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
@@ -37,11 +36,11 @@ async def process(bot):
     for menu in menus:
         # 🍽 Ovqat turiga qarab vaqt belgilaymiz
         if menu.meal_type == "lunch":
-            start_time = time(20, 29)
-            end_time = time(20, 31)
-        # elif menu.meal_type == "dinner":
-        #     start_time = time(18, 0)
-        #     end_time = time(20, 0)
+            start_time = time(10, 30)
+            end_time = time(10, 30)
+        elif menu.meal_type == "dinner":
+            start_time = time(16, 00)
+            end_time = time(16, 30)
         else:
             continue
 
@@ -95,7 +94,6 @@ async def process(bot):
             yes_count = len(yes_users)
             no_count = len(no_users)
 
-            # 📋 Statistikaga ro‘yxatlarni qo‘shish
             result_text = (
                 f"🍽 {meal_title} yakunlandi!\n\n"
                 f"✅ Yeyman: {yes_count} ta\n"
