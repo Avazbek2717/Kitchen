@@ -21,31 +21,43 @@ class User(BaseModel):
 
 
 class Meal(BaseModel):
-    MEAL_TYPE_CHOICES = (
-        ("lunch", "Abed"),
-        ("dinner", "Kechki ovqat"),
-    )
+    
 
+    title = models.CharField(max_length=255)
+    image = models.ImageField(upload_to="media/", blank=True, null=True, verbose_name="Rasm")  
+
+
+    def __str__(self):
+        return f"{self.title})"
+
+
+
+
+
+class WeeklyMenu(BaseModel):
     STATUS_CHOICES = (
         ("pending", "Kutilmoqda"),
         ("active", "Faol"),
-        ("ended", "Tugagan"),
+        ("ended", "Yakunlangan"),
+    )
+    MEAL_TYPE = (
+        ("lunch", "Abed"),
+        ("dinner", "Kechki")
     )
 
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to="media/", blank=True, null=True, verbose_name="Rasm")  
-    date = models.DateField()
-    meal_type = models.CharField(max_length=20, choices=MEAL_TYPE_CHOICES)
+    
+    date = models.DateField()  # Har bir kun uchun aniq
+    meal = models.ForeignKey(Meal, on_delete=models.SET_NULL, null=True, blank=True, related_name="lunch_menus")
+    meal_type = models.CharField(max_length=20, choices=MEAL_TYPE)
 
-    start_time = models.TimeField(verbose_name="So‘rovnoma boshlanish vaqti")
-    end_time = models.TimeField(verbose_name="So‘rovnoma tugash vaqti")
-
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="pending")
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES,
+        default="pending"
+    )
 
     def __str__(self):
-        return f"{self.get_meal_type_display()} - {self.title} ({self.date})"
-
+        return f"Menu"
+    
     @property
     def yes_count(self):
         return self.responses.filter(response="yes").count()
@@ -53,6 +65,9 @@ class Meal(BaseModel):
     @property
     def no_count(self):
         return self.responses.filter(response="no").count()
+
+    
+
 
 
 class MealResponse(BaseModel):
@@ -62,17 +77,15 @@ class MealResponse(BaseModel):
     )
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="meal_responses")
-    meal = models.ForeignKey(Meal, on_delete=models.CASCADE, related_name="responses")
+    menu = models.ForeignKey(WeeklyMenu, on_delete=models.CASCADE, related_name="responses")
     response = models.CharField(max_length=10, choices=RESPONSE_CHOICES)
     responded_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ("user", "meal") 
+        unique_together = ("user", "menu") 
+
 
     def __str__(self):
-        return f"{self.user.full_name} - {self.meal.title} - {self.response}"
-    
-
-
-
+        meal_title = self.menu.meal.title if self.menu and self.menu.meal else "Noma’lum ovqat"
+        return f"{self.user.full_name} - {meal_title} - {self.response}"
 
