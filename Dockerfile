@@ -19,7 +19,7 @@ RUN pip install gunicorn
 
 COPY . .
 
-CMD ["gunicorn", "kitchen.wsgi:application", "--workers", "4", "--bind", "0.0.0.0:8099"]
+CMD ["gunicorn", "core.wsgi:application", "--workers", "4", "--bind", "0.0.0.0:8099"]
 
 EXPOSE 8099
 

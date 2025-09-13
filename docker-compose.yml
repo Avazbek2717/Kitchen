@@ -31,7 +31,7 @@ services:
     env_file:
       - .env
     container_name: kitchen_web_container
-    command: gunicorn kitchen.wsgi:application --workers 4 --bind=0.0.0.0:8099
+    command: gunicorn core.wsgi:application --workers 4 --bind=0.0.0.0:8099
     ports:
       - "8099:8099"
     depends_on:
