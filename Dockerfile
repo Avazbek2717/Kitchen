@@ -16,7 +16,6 @@ RUN apt-get update && \
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
-RUN python manage.py collectstatic --noinput
 
 COPY . .
 
